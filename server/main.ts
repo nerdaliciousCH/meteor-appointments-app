@@ -1,37 +1,72 @@
 import { Meteor } from 'meteor/meteor';
-import { Link, LinksCollection } from '/imports/api/links';
+import { Accounts } from 'meteor/accounts-base';
+import { AppointmentsCollection } from '/imports/api/AppointmentsCollection';
+import "../imports/api/AppointmentsPublications"; 
+import "../imports/api/appointmentsMethods";
 
-async function insertLink({ title, url }: Pick<Link, 'title' | 'url'>) {
-  await LinksCollection.insertAsync({ title, url, createdAt: new Date() });
+const SEED_USERNAME_1 = "test1";
+const SEED_PASSWORD_1 = "pw1";
+const SEED_USERNAME_2 = "test2";
+const SEED_PASSWORD_2 = "pw2";
+const lastNames = [
+  "Huang",
+  "Travis",
+  "Kemp",
+  "Hanson",
+  "Gilmore",
+  "Newman",
+  "Pena",
+  "Howe",
+  "Wolf",
+  "Blake",
+  "Walton",
+  "Schultz",
+]
+
+const firstNames = [
+  "Charles",
+  "Sage",
+  "Ernest",
+  "Cayden",
+  "Frank",
+  "Sidney",
+  "Atticus",
+  "Corey",
+  "Yahir",
+  "Yair",
+  "Kaleb",
+  "Josue",
+]
+
+async function insertRandomAppointment(user) {
+  await AppointmentsCollection.insertAsync({
+    userId: user._id,
+    firstName: firstNames[Math.floor(Math.random() * firstNames.length)],
+    lastName: lastNames[Math.floor(Math.random() * lastNames.length)],
+    createdAt: new Date(),
+    date: new Date(),
+  });
 }
 
 Meteor.startup(async () => {
-  // If the Links collection is empty, add some data.
-  if (await LinksCollection.find().countAsync() === 0) {
-    await insertLink({
-      title: 'Do the Tutorial',
-      url: 'https://www.meteor.com/tutorials/react/creating-an-app',
-    });
-
-    await insertLink({
-      title: 'Follow the Guide',
-      url: 'https://guide.meteor.com',
-    });
-
-    await insertLink({
-      title: 'Read the Docs',
-      url: 'https://docs.meteor.com',
-    });
-
-    await insertLink({
-      title: 'Discussions',
-      url: 'https://forums.meteor.com',
-    });
+  if (!await Accounts.findUserByUsername(SEED_USERNAME_1)) {
+    await Accounts.createUser({
+      username: SEED_USERNAME_1,
+      password: SEED_PASSWORD_1,
+    })
   }
-
-  // We publish the entire Links collection to all clients.
-  // In order to be fetched in real-time to the clients
-  Meteor.publish("links", function () {
-    return LinksCollection.find();
-  });
+  if (!await Accounts.findUserByUsername(SEED_USERNAME_2)) {
+    await Accounts.createUser({
+      username: SEED_USERNAME_2,
+      password: SEED_PASSWORD_2,
+    })
+  }
+  const user1 = await Accounts.findUserByUsername(SEED_USERNAME_1);
+  const user2 = await Accounts.findUserByUsername(SEED_USERNAME_2);
+  const appointmentsCount = await AppointmentsCollection.find().countAsync()
+  if (appointmentsCount === 0) {
+    const twenty = Array.from({length:20}, (value, key) => key + 1)
+    twenty.map(() => insertRandomAppointment(user1));
+    twenty.map(() => insertRandomAppointment(user2));
+  }
 });
