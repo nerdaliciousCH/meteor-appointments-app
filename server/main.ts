@@ -38,13 +38,18 @@ const firstNames = [
   "Josue",
 ]
 
-async function insertRandomAppointment(user) {
+const getRandomElementFromArray = (array: string[]) => array[Math.floor(Math.random() * array.length)];
+const getRandomDate = (startDate: Date, daysFromStart: number) => {
+  return new Date(startDate.getTime() + Math.random() * 1000 * 60 * 60 * 24 * daysFromStart)
+};
+
+const insertRandomAppointment = async (user: Meteor.User) => {
   await AppointmentsCollection.insertAsync({
     userId: user._id,
-    firstName: firstNames[Math.floor(Math.random() * firstNames.length)],
-    lastName: lastNames[Math.floor(Math.random() * lastNames.length)],
+    firstName: getRandomElementFromArray(firstNames),
+    lastName: getRandomElementFromArray(lastNames),
     createdAt: new Date(),
-    date: new Date(),
+    date: getRandomDate(new Date(), 30),
   });
 }
 
@@ -64,7 +69,7 @@ Meteor.startup(async () => {
   const user1 = await Accounts.findUserByUsername(SEED_USERNAME_1);
   const user2 = await Accounts.findUserByUsername(SEED_USERNAME_2);
   const appointmentsCount = await AppointmentsCollection.find().countAsync()
-  if (appointmentsCount === 0) {
+  if (appointmentsCount === 0 && user1 && user2) {
     const twenty = Array.from({length:20}, (value, key) => key + 1)
     twenty.map(() => insertRandomAppointment(user1));
     twenty.map(() => insertRandomAppointment(user2));
