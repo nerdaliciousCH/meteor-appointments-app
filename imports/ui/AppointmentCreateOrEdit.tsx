@@ -2,6 +2,7 @@ import React, { FormEvent, useEffect, useState } from 'react';
 import { Meteor } from "meteor/meteor";
 import { Appointment } from '../api/AppointmentsCollection';
 import { Card } from './Card';
+import { dateToISODateString } from '../utils/date';
 
 const emptyAppointment: Appointment = {
     firstName: "",
@@ -75,11 +76,11 @@ export const AppointmentCreateOrEdit = ({
                 <input
                     type='date'
                     required
-                    min={new Date().toISOString().substring(0, 10)}
+                    min={dateToISODateString(new Date())}
                     value={
                         currentAppointment.date ? 
-                        currentAppointment.date.toISOString().substring(0, 10) : 
-                        new Date().toISOString().substring(0, 10)
+                        dateToISODateString(currentAppointment.date) : 
+                        dateToISODateString(new Date())
                     }
                     onChange={(e) => setCurrentAppointment(old => {
                         if (!e.target.value) return old;
