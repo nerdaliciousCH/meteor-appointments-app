@@ -56,7 +56,7 @@ export const AppointmentList = ({selectedAppointment, setSelectedAppointment}: A
           return [];
         }
         return AppointmentsCollection.find({}, {sort: {
-          createdAt: 1
+          date: 1
         }}).fetch()
     });
 
