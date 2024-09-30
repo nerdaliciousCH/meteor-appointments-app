@@ -3,6 +3,7 @@ import { Accounts } from 'meteor/accounts-base';
 import { AppointmentsCollection } from '/imports/api/AppointmentsCollection';
 import "../imports/api/AppointmentsPublications"; 
 import "../imports/api/appointmentsMethods";
+import { dateToTimestampStrippedTime } from '/imports/utils/date';
 
 const SEED_USERNAME_1 = "test1";
 const SEED_PASSWORD_1 = "pw1";
@@ -40,7 +41,9 @@ const firstNames = [
 
 const getRandomElementFromArray = (array: string[]) => array[Math.floor(Math.random() * array.length)];
 const getRandomDate = (startDate: Date, daysFromStart: number) => {
-  return new Date(startDate.getTime() + Math.random() * 1000 * 60 * 60 * 24 * daysFromStart)
+  const daysToAdd = Math.floor(Math.random() * daysFromStart)
+  const startTime = dateToTimestampStrippedTime(startDate);
+  return new Date(startTime + 1000 * 60 * 60 * 24 * daysToAdd)
 };
 
 const insertRandomAppointment = async (user: Meteor.User) => {
@@ -49,7 +52,7 @@ const insertRandomAppointment = async (user: Meteor.User) => {
     firstName: getRandomElementFromArray(firstNames),
     lastName: getRandomElementFromArray(lastNames),
     createdAt: new Date(),
-    date: getRandomDate(new Date(), 30),
+    date: getRandomDate(new Date(Date.now()), 30),
   });
 }
 
