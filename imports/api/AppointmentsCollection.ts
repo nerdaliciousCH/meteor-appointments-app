@@ -7,6 +7,7 @@ export interface Appointment {
   lastName: string
   createdAt: Date;
   date: Date;
+  isAllDay: boolean;
 }
 
 export const AppointmentsCollection = new Mongo.Collection<Appointment>('appointments');

@@ -15,6 +15,7 @@ export const LoginForm = () => {
     <form onSubmit={submit} className="login-form">
       <div>
         <input
+          className="input-base"
           type="text"
           placeholder="Username"
           name="username"
@@ -25,6 +26,7 @@ export const LoginForm = () => {
       </div>
       <div>
         <input
+          className="input-base"
           type="password"
           placeholder="Password"
           name="password"

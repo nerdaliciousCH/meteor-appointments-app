@@ -53,6 +53,7 @@ const insertRandomAppointment = async (user: Meteor.User) => {
     lastName: getRandomElementFromArray(lastNames),
     createdAt: new Date(),
     date: getRandomDate(new Date(Date.now()), 30),
+    isAllDay: Math.random() <= 0.25,
   });
 }
 
